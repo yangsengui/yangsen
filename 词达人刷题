@@ -1,0 +1,59 @@
+import json
+import requests
+import random
+
+
+headers={
+'Host': 'api.vocabgo.com',
+'Connection': 'keep-alive',
+'Content-Length': '301',
+'Accept': 'application/json, text/plain, */*',
+'Origin': 'http://web.vocabgo.com',
+'UserToken': '2004214697aec238e5822c61290b1d62',
+'X-Requested-With': 'XMLHttpRequest',
+'User-Agent': 'Mozilla/5.0 (Linux; Android 10; GM1900 Build/QKQ1.190716.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/67.0.3396.87 XWEB/1169 MMWEBSDK/191201 Mobile Safari/537.36 MMWEBID/6626 MicroMessenger/7.0.10.1580(0x27000A5A) Process/tools NetType/WIFI Language/zh_CN ABI/arm64',
+'Content-Type': 'application/json;charset=UTF-8',
+'Referer': 'http://web.vocabgo.com/',
+'Accept-Encoding': 'gzip, deflate',
+'Accept-Language': 'zh-CN,en-US;q=0.9',
+'Cookie': "_ga=GA1.2.2067226598.1581643967; _gid=GA1.2.1989279706.1582175602; _gat_gtag_UA_150293042_1=1",
+}
+
+url='http://api.vocabgo.com/Student/ClassTask/SubmitAnswer'
+
+def done_homework(word='wild',topic_mode='0',topic_index='4061'):
+    #这是一个有值就能跑的函数
+
+    data = {"task_id": 2236803, "task_type": 1, "study_type": 2, "task_control_id": 4499463, "course_id": "CET4_1",
+            "list_id": "CET4_1_05", "word": word, "topic_mode": topic_mode, "topic_index": topic_index,
+            "submit_result": {"time_spent": random.randint(15000,23000), "score": 10}, "timestamp": 1582371527673 ,"versions": "1.0",
+            "sign": "4d8569fe4f0809feb345f5a7f6f950eb"}
+    response = requests.post(url=url, data=json.dumps(data), headers=headers, timeout=10)
+    json_d = json.dumps(response.text)
+    data=json.loads(json_d)
+    data = data.replace('null', '1')
+    data = data.replace('false','2')
+    data = data.replace('true','0')
+    print(eval(data))
+    topic_index=eval(data)['data']['topic_index']
+    word=eval(data)['data']['word']
+    topic_mode = eval(data)['data']['topic_mode']
+    topic_done_num=eval(data)['data']['topic_done_num']
+    topic_total = eval(data)['data']['topic_total']
+    return word,topic_mode,topic_index,topic_total,topic_done_num
+
+topic_total,topic_index,word,topic_mode,topic_done_num=done_homework()
+while True:
+    if int(topic_done_num) < 265 :
+        word,topic_mode,topic_index,topic_total,topic_done_num=done_homework(word,topic_mode,topic_index)
+        print(topic_total,topic_index,word,topic_mode,topic_done_num)
+        print(topic_done_num)
+    else:
+        print(topic_done_num)
+        print(topic_mode)
+        print(topic_index)
+        print(word)
+        print(topic_total)
+        print('错误')
+        break
+
